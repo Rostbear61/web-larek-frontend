@@ -41,6 +41,32 @@ npm run build
 yarn build
 ```
 
+Типы данных и интерфейсы
+
+type TResponseProductList = ApiListResponse<IProduct>; - каталог товаров полученных с сервера и общее кол-во товаров
+
+type TResponseProductItem = IProduct | { error: 'NotFound' }; 
+
+type TResponseOrder = { id: string; total: number } | { error: string }; 
+
+type CategoryType = 'другое' | 'софт-скил' | 'дополнительное' | 'кнопка' | 'хард-скил'; - категории товаров
+
+type TPaymentMethod = 'card' | 'cash'; - тип оплаты
+
+interface IProduct {
+	id: string; - id товара;
+    category: string; - категория товара;
+    title: string; - название товара;
+    image: string; - картинка товара;
+	description: string; - описание товара;
+	price: number; - стоимость товара;
+}
+
+interface IFormState {
+    valid: boolean;
+    errors: string[];
+}
+
 Модель данных
 
 class CatalogModel - содержит каталог полученных товаров. Методы:
