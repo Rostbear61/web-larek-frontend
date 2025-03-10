@@ -54,12 +54,19 @@ type CategoryType = 'другое' | 'софт-скил' | 'дополнител
 type TPaymentMethod = 'card' | 'cash'; - тип оплаты
 
 interface IProduct {
+
 	id: string; - id товара;
+
     category: string; - категория товара;
+
     title: string; - название товара;
+
     image: string; - картинка товара;
+
 	description: string; - описание товара;
+
 	price: number; - стоимость товара;
+    
 }
 
 interface IFormState {
