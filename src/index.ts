@@ -1,22 +1,73 @@
 import './scss/styles.scss';
-import { Api } from './components/base/base/api';
+import { WebLarekApi } from './components/WebLarekApi';
 import {API_URL} from './utils/constants';
+import { Presenter } from './components/Presenter';
+import { EventEmitter } from './components/base/events';
+import { IContacts, IPayment, IProduct, TAnswerOrder, TResponseOrder } from './types';
 
-const api = new Api(API_URL);
-api.get('/product/').then((result) => console.log(result));
 
+const api = new WebLarekApi(API_URL);
+const events = new EventEmitter();
+const presenter = new Presenter(events);
 
-/*const arrId = ['854cef69-976d-4c2a-a18c-2aa45046c390', 'c101ab44-ed99-4a54-990d-47aa2bb4e7d9'];
-const totalSum: number = 1450 + 750;
+api.getItemsList()
+.then((data) => presenter.updateCatalog(data))
+.catch((error) => console.log(error));
 
-const newObgobg = {
-    "payment": "online",
-    "email": "test@test.ru",
-    "phone": "+71234567890",
-    "address": "Spb Vosstania 1",
-    "total": totalSum,
-    "items": arrId
-};
+events.on('catalog:change', () => {
+    presenter.renderCatalog();
+});
 
-api.post('order', newObgobg).then((result) => 
-    console.log(result));*/
+events.on('card:click', (event: IProduct) => {
+    presenter.openCard(event);
+});
+
+events.on('backet:change', () => {
+    presenter.renderBasket();
+});
+
+events.on('contacts:submit', () => {
+    api.postOrder(presenter.buildOrder())
+    .then((result : TAnswerOrder ) => {
+        
+        presenter.renderAnswer(result.total);
+    })
+    .catch((error) => console.log(error));
+});
+
+events.on('successForm:okClick', () => {
+    presenter.closeModal(); 
+    presenter.renderBasket();
+});
+
+events.on('order:open', () => {
+    presenter.openPayment();
+});
+
+events.on('order:submit', () => {
+    presenter.openContact();
+})
+
+events.on(/^order\..*:change/, (data: {field: keyof IPayment, value: string}) => {
+    presenter.updatePayment(data.field, data.value);
+});
+
+events.on('payment: change', () => {
+    presenter.renderPayment();   
+});
+
+events.on('contact:change', () => {    
+    presenter.renderContacts();   
+});
+
+events.on(/^contact\..*\..*$/, (data: {field: keyof IContacts, value: string}) => {
+    presenter.updateContacts(data.field as keyof IContacts, data.value);
+});
+
+events.on('modal:open', () => {
+    presenter.lockedWrapper();
+});
+
+events.on('modal:close', () => {
+    presenter.unlockedWrapper();
+});

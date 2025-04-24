@@ -79,53 +79,36 @@ type EventName = string | RegExp;
 
 type Subscriber = Function;
 
-type EmitterEvent = {
-
-    eventName: string,
-
-    data: unknown
-
-};
+type TAnswerOrder = { id: string; total: number };
 
 interface IEvents {
     on<T extends object>(event: EventName, callback: (data: T) => void): void;
-
     emit<T extends object>(event: string, data?: T): void;
-
     trigger<T extends object>(event: string, context?: Partial<T>): (data: T) => void;
 
 }
 
+interface IEventEmiter {
+	emit: (event: string, data: unknown) => void;
+}
 
 interface IProduct {
-
 	id: string; - id товара;
-
     category: string; - категория товара;
-
     title: string; - название товара;
-
     image: string; - картинка товара;
-
 	description: string; - описание товара;
-
 	price: number | null; - стоимость товара;
 
 }
 
 interface ISendOrder {
-
 	"payment": string,
-
     "email": string,
-
     "phone": string,
-
     "address": string,
-
     "total": number,
-
-    "items": Array
+    "items": string[]
 }
 
 interface IFormState {
@@ -133,121 +116,200 @@ interface IFormState {
     errors: string[];
 }
 
+interface IBasketView {
+    items: HTMLElement[];
+    total: number |null;
+    valid: boolean;
+}
+
+interface IPageView {
+	set basketCount(value: number);
+	set scrollState(value: boolean);
+}
+
+interface IContacts{
+	phone: string;
+	email: string;
+}
+
+interface IPayment{
+	payment: TPaymentMethod,
+	address: string,
+}
+
+interface IOrderForm {
+	payment: TPaymentMethod;
+	address: string;
+}
+
+interface ICatalogModel {
+	items: IProduct[];
+	findProductById(id: string): IProduct;
+}
+
+interface ISuccess {
+	total: number;
+}
+
+interface IModalData {
+    content: HTMLElement ;
+}
+
+interface IBasket {
+	items: Set<string>;
+}
+
+interface IBasketModel {
+	items: Set<string>;
+	add(id: string): void;
+	remove(id: string): void;
+	getTotal(catalog: ICatalogModel): number|null;
+}
+
+interface IOrder extends IContacts, IPayment {
+	total: number;
+	items: string[];
+}
+
 ## Базовый код
 class Api {
 	readonly baseUrl: string;
-
 	protected options: RequestInit;
-
-	constructor(baseUrl: string, options: RequestInit = {}) 
-
-	protected handleResponse(response: Response): Promise<object> 
-
-	get(uri: string) 
-
-	post(uri: string, data: object, method: ApiPostMethods = 'POST') 
+	constructor(baseUrl: string, options: RequestInit = {}) ;
+	protected handleResponse(response: Response): Promise<object> ;
+	get(uri: string) ;
+	post(uri: string, data: object, method: ApiPostMethods = 'POST') ;
 
 }
 
 abstract class Component<T> {
-
-	protected constructor(protected readonly container: HTMLElement)
-
-	toggleClass(element: HTMLElement, className: string, force?: boolean)
-
-	protected setText(element: HTMLElement, value: unknown)
-
-	setDisabled(element: HTMLElement, state: boolean) 
-
-	protected setHidden(element: HTMLElement) 
-
-	protected setVisible(element: HTMLElement) 
-
-	protected setImage(element: HTMLImageElement, src: string, alt?: string) 
-
-	render(data?: Partial<T>): HTMLElement 
+	protected constructor(protected readonly container: HTMLElement);
+	toggleClass(element: HTMLElement, className: string, force?: boolean);
+	protected setText(element: HTMLElement, value: unknown);
+	setDisabled(element: HTMLElement, state: boolean) ;
+	protected setHidden(element: HTMLElement) ;
+	protected setVisible(element: HTMLElement) ;
+	protected setImage(element: HTMLImageElement, src: string, alt?: string) ;
+	render(data?: Partial<T>): HTMLElement .
 
 }
 
 class EventEmitter implements IEvents {
-
-	_events: Map<EventName, Set<Subscriber>>
-
-	constructor() 
-
-	on<T extends object>(eventName: EventName, callback: (event: T) => void) 
-
-	off(eventName: EventName, callback: Subscriber) 
-
-	emit<T extends object>(eventName: string, data?: T) 
-
-	onAll(callback: (event: EmitterEvent) => void) 
-
-	offAll() 
-
-	trigger<T extends object>(eventName: string, context?: Partial<T>) 
+	_events: Map<EventName, Set<Subscriber>>;
+	on<T extends object>(eventName: EventName, callback: (event: T) => void) ;
+	off(eventName: EventName, callback: Subscriber) ;
+	emit<T extends object>(eventName: string, data?: T) ;
+	onAll(callback: (event: EmitterEvent) => void) ;
+	offAll() ;
+	trigger<T extends object>(eventName: string, context?: Partial<T>) .
 
 }
 
 abstract class Model<T> {
-
-	constructor(data: Partial<T>, protected events: IEvents)
-
-	emitChanges(event: string, payload?: object) 
+	constructor(data: Partial<T>, protected events: IEvents);
+	emitChanges(event: string, payload?: object) .
 
 }
+
+class Form<T> extends Component<T>
+protected _submit;
+protected _errors;
+protected onInputChange;
+set valid;
+set errors;
+render.
+
+class Modal extends Component<IModalData> {
+    protected _closeButton: HTMLButtonElement;
+    protected _content: HTMLElement;
+    set content(value: HTMLElement);
+    open();
+    close();
+    render(data: IModalData) : HTMLElement.
+}
+
+class SuccessView extends Component<ISuccess> {
+    private description: HTMLElement;
+    set total(value: number).
+}
+
 ## Модель данных
 
-class CatalogModel - содержит каталог полученных товаров. Методы:
+class CatalogModel - реализует интерфейс ICatalogModel. Содержит каталог полученных товаров. Методы:
 - setItems - записывает каталог продуктов
 - getItems - возвращяет каталог продуктов
-- getProduct - возвращает продукт по id
+- findProductById - возвращает продукт по id
 
-class BasketModel - содержит список товаров, которые добавлены в корзину и их кол-во. Методы:
-- addProduct - добавление товара;
-- removeProduct - убрать товар;
-- resetAllProduct - очистить от всех товаров;
-- getPrice - стоимость всех товаров в корзине.
+class BasketModel - реализует интерфейс IBasketModel наследует от Model<IBasket>. Содержит список товаров, которые добавлены в корзину и их кол-во. Методы:
+- add - добавление товара;
+- remove - убрать товар;
+- validation - 
+- reset - очистить от всех товаров;
+- getTotal - стоимость всех товаров в корзине.
 
-class BuyerModel - содержит данные покупателя. Методы:
-- set payment - записать способ оплаты ;
-- set adress - записать адрес;
-- set phone - записать телефон;
+class ContactModel - наследует от Model<IContacts>. Методы :
+- reset - сброс значений телефона и почтового адреса;
 - set email - записать почтовый адрес;
-- get payment - записать способ оплаты;
-- get adress - записать адрес;
+- set phone - записать телефон;
 - get phone - записать телефон;
 - get email - записать почтовый адрес;
-- validForm - валидация форм;
-- resetBuyerInfo - сброс данных пользователя.
+
+
+class PaymentModel - наследует от Model<IPayment>. Методы :
+- validate - валидация форм;
+- reset - сброс значений телефона и почтового адреса;
+- set payment - записать способ оплаты ;
+- set adress - записать адрес;
+- get payment - записать способ оплаты;
+- get adress - записать адрес;
 
 ## Компоненты представления
 
-class BasketView - отображение корзины;
+class BasketView - наследует от Component<IBasketView> Отображение корзины. Методы:
+- set items - отображение списка с товарами либо надписи "Корзина пуста";
+- set valid - 
 
-class CardView - отображение одной карточки и отслеживание добавление товара в корзину;
+class CardView - наследует от Component<IProduct...>. Отображение одной карточки и отслеживание добавление товара в корзину. Методы:
+- set disabledBuy - ;
+- set title - ;
+- set price - ;
+- set description - ;
+- set category - ;
+- set image - ;
+- set index - .
 
-class CatalogView - отображение каталога карточек на главной странице, отслеживает клик по карточке;
+class CatalogView - наследует от Component<{items: HTMLElement[]}>. Отображение каталога карточек на главной странице. Метод:
+- set items - .
 
-class PageView - отображение кол-ва товаров в корзине и блокировка прокрутки при открытии модального окна;
+class PageView - наследует от Component<IPageView>. Отображение кол-ва товаров в корзине и блокировка прокрутки при открытии модального окна. Методы:
+- set basketCount - отобразить кол-во товаров на странице; 
+- set scrollState - блакировка прокрутки.
 
-class ContactsForm - форма почты и телефона;
+class ContactsForm - наследует от Form<IContact>. Запись почты и телефона. Методы:
+- set phone;
+- set email.
 
-class PayForm - форма со способом оплаты и адрес доставки;
 
+class PayForm - наследует от Form<IPayment>. Запись способа оплаты и адреса доставки. Методы:
+- set address - ;
+- set payment - .
 ## Презентер
 
 class Presenter - отвечает за связь между моделями данных и компонентами представления. Методы:
 - renderBasket - отрисовка корзины;
+- updateCatalog - запись полученных с сервера карточек в CatalogModel.
 - renderCatalog - отрисовка каталога карточек;
 - openCard - открыть карточку;
-- lockedScroll - блокировка прокрутки страницы;
-- unlockScroll - снятие блокировки прокрутки страницы;
-- openAnswer - открыть модальное окно успешного заказа;
-- openPayForm - открыть модальное окно оплаты;
-- updatePayForm - обновляет данные оплаты
-- openContactsForm - открыть модальное окно данных пользователя; 
-- updateContactsForm - обновляет данные пользователя
+- lockedWrapper - блокировка прокрутки страницы;
+- unlockWrapper - снятие блокировки прокрутки страницы;
+- buildOrder - формирует объект для отправки данных для покупки на сервер;
+- renderAnswer - открыть модальное окно успешного заказа;
+- openPayment - открыть модальное окно оплаты;
+- updatePayment - обновляет данные оплаты
+- renderPayment - собирает данные для модального окна;
+- renderContact - собирает данные для модального окна;
+- openContact - открыть модальное окно данных пользователя; 
+- updateContact - обновляет данные пользователя
 - closeModal - закрыть модальное окно;
 
 ## Сервисный класс WebLarekApi 
