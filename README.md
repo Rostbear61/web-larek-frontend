@@ -41,7 +41,7 @@ npm run build
 yarn build
 ```
 ## Список событий в приложении
-Проект состоит из 6-ти экранов:
+Проект состоит из:
 - Главная страница, содержит: лого, табличка с кнопками карточек товаров, кнопку корзины с цифровым экраном кол-ва товаров в ней(корзине);
 - Модальное окно товара, содержит: картинку товара, категорию, название, описание, цену, кнопку закрыть модальное окно и кнопку купить;
 - Модальное окно корзины, содержит: заголовок, таблицу с добавленными товарами (номер по порядку, название товара и цену), кнопку закрыть модальное окно, кнопку "Оформить" и итоговую сумму товаров;
@@ -63,8 +63,8 @@ type TSendProduct = ISendOrder | { error: string }
 type TResponseOrder = { id: string; total: number } | { error: string }; 
 
 type EmitterEvent = {
-    eventName: string,
-    data: unknown
+ -   eventName: string,
+ -   data: unknown
 };
 
 type CategoryType = 'другое' | 'софт-скил' | 'дополнительное' | 'кнопка' | 'хард-скил'; - категории товаров
@@ -72,7 +72,7 @@ type CategoryType = 'другое' | 'софт-скил' | 'дополнител
 type TPaymentMethod = 'card' | 'cash'; - тип оплаты
 
 type Partial<T> = {
-    [P in keyof T]?: T[P];
+ -   [P in keyof T]?: T[P];
 }
 
 type EventName = string | RegExp;
@@ -82,155 +82,149 @@ type Subscriber = Function;
 type TAnswerOrder = { id: string; total: number };
 
 interface IEvents {
-    on<T extends object>(event: EventName, callback: (data: T) => void): void;
-    emit<T extends object>(event: string, data?: T): void;
-    trigger<T extends object>(event: string, context?: Partial<T>): (data: T) => void;
-
+ -   on<T extends object>(event: EventName, callback: (data: T) => void): void;
+ -   emit<T extends object>(event: string, data?: T): void;
+ -   trigger<T extends object>(event: string, context?: Partial<T>): (data: T) => void;
 }
 
 interface IEventEmiter {
-	emit: (event: string, data: unknown) => void;
+-	emit: (event: string, data: unknown) => void;
 }
 
 interface IProduct {
-	id: string; - id товара;
-    category: string; - категория товара;
-    title: string; - название товара;
-    image: string; - картинка товара;
-	description: string; - описание товара;
-	price: number | null; - стоимость товара;
-
+-	id: string; - id товара;
+-    category: string; - категория товара;
+-    title: string; - название товара;
+-    image: string; - картинка товара;
+-	description: string; - описание товара;
+-	price: number | null; - стоимость товара;
 }
 
 interface ISendOrder {
-	"payment": string,
-    "email": string,
-    "phone": string,
-    "address": string,
-    "total": number,
-    "items": string[]
+-	"payment": string,
+-    "email": string,
+-    "phone": string,
+-    "address": string,
+-    "total": number,
+-    "items": string[]
 }
 
 interface IFormState {
-    valid: boolean;
-    errors: string[];
+ -   valid: boolean;
+ -   errors: string[];
 }
 
 interface IBasketView {
-    items: HTMLElement[];
-    total: number |null;
-    valid: boolean;
+-    items: HTMLElement[];
+-    total: number |null;
+-    valid: boolean;
 }
 
 interface IPageView {
-	set basketCount(value: number);
-	set scrollState(value: boolean);
+-	set basketCount(value: number);
+-	set scrollState(value: boolean);
 }
 
 interface IContacts{
-	phone: string;
-	email: string;
+-	phone: string;
+-	email: string;
 }
 
 interface IPayment{
-	payment: TPaymentMethod,
-	address: string,
+-	payment: TPaymentMethod,
+-	address: string,
 }
 
 interface IOrderForm {
-	payment: TPaymentMethod;
-	address: string;
+-	payment: TPaymentMethod;
+-	address: string;
 }
 
 interface ICatalogModel {
-	items: IProduct[];
-	findProductById(id: string): IProduct;
+-	items: IProduct[];
+-	findProductById(id: string): IProduct;
 }
 
 interface ISuccess {
-	total: number;
+-	total: number;
 }
 
 interface IModalData {
-    content: HTMLElement ;
+ -   content: HTMLElement ;
 }
 
 interface IBasket {
-	items: Set<string>;
+-	items: Set<string>;
 }
 
 interface IBasketModel {
-	items: Set<string>;
-	add(id: string): void;
-	remove(id: string): void;
-	getTotal(catalog: ICatalogModel): number|null;
+-	items: Set<string>;
+-	add(id: string): void;
+-	remove(id: string): void;
+-	getTotal(catalog: ICatalogModel): number|null;
 }
 
 interface IOrder extends IContacts, IPayment {
-	total: number;
-	items: string[];
+-	total: number;
+-	items: string[];
 }
 
 ## Базовый код
 class Api {
-	readonly baseUrl: string;
-	protected options: RequestInit;
-	constructor(baseUrl: string, options: RequestInit = {}) ;
-	protected handleResponse(response: Response): Promise<object> ;
-	get(uri: string) ;
-	post(uri: string, data: object, method: ApiPostMethods = 'POST') ;
-
+-	readonly baseUrl: string;
+-	protected options: RequestInit;
+-	constructor(baseUrl: string, options: RequestInit = {}) ;
+-	protected handleResponse(response: Response): Promise<object> ;
+-	get(uri: string) ;
+-	post(uri: string, data: object, method: ApiPostMethods = 'POST') ;
 }
 
 abstract class Component<T> {
-	protected constructor(protected readonly container: HTMLElement);
-	toggleClass(element: HTMLElement, className: string, force?: boolean);
-	protected setText(element: HTMLElement, value: unknown);
-	setDisabled(element: HTMLElement, state: boolean) ;
-	protected setHidden(element: HTMLElement) ;
-	protected setVisible(element: HTMLElement) ;
-	protected setImage(element: HTMLImageElement, src: string, alt?: string) ;
-	render(data?: Partial<T>): HTMLElement .
-
+-	protected constructor(protected readonly container: HTMLElement);
+-	toggleClass(element: HTMLElement, className: string, force?: boolean);
+-	protected setText(element: HTMLElement, value: unknown);
+-	setDisabled(element: HTMLElement, state: boolean) ;
+-	protected setHidden(element: HTMLElement) ;
+-	protected setVisible(element: HTMLElement) ;
+-	protected setImage(element: HTMLImageElement, src: string, alt?: string) ;
+-	render(data?: Partial<T>): HTMLElement .
 }
 
 class EventEmitter implements IEvents {
-	_events: Map<EventName, Set<Subscriber>>;
-	on<T extends object>(eventName: EventName, callback: (event: T) => void) ;
-	off(eventName: EventName, callback: Subscriber) ;
-	emit<T extends object>(eventName: string, data?: T) ;
-	onAll(callback: (event: EmitterEvent) => void) ;
-	offAll() ;
-	trigger<T extends object>(eventName: string, context?: Partial<T>) .
-
+-	_events: Map<EventName, Set<Subscriber>>;
+-	on<T extends object>(eventName: EventName, callback: (event: T) => void) ;
+-	off(eventName: EventName, callback: Subscriber) ;
+-	emit<T extends object>(eventName: string, data?: T) ;
+-	onAll(callback: (event: EmitterEvent) => void) ;
+-	offAll() ;
+-	trigger<T extends object>(eventName: string, context?: Partial<T>) .
 }
 
 abstract class Model<T> {
-	constructor(data: Partial<T>, protected events: IEvents);
-	emitChanges(event: string, payload?: object) .
-
+-	constructor(data: Partial<T>, protected events: IEvents);
+-	emitChanges(event: string, payload?: object) .
 }
 
 class Form<T> extends Component<T>
-protected _submit;
-protected _errors;
-protected onInputChange;
-set valid;
-set errors;
-render.
+- 	protected _submit;
+-	protected _errors;
+-	protected onInputChange;
+-	set valid;
+-	set errors;
+-	render.
 
 class Modal extends Component<IModalData> {
-    protected _closeButton: HTMLButtonElement;
-    protected _content: HTMLElement;
-    set content(value: HTMLElement);
-    open();
-    close();
-    render(data: IModalData) : HTMLElement.
+-    protected _closeButton: HTMLButtonElement;
+-    protected _content: HTMLElement;
+-    set content(value: HTMLElement);
+-    open();
+-    close();
+-    render(data: IModalData) : HTMLElement.
 }
 
 class SuccessView extends Component<ISuccess> {
-    private description: HTMLElement;
-    set total(value: number).
+-    private description: HTMLElement;
+-    set total(value: number).
 }
 
 ## Модель данных
@@ -270,13 +264,13 @@ class BasketView - наследует от Component<IBasketView> Отображ
 - set valid - 
 
 class CardView - наследует от Component<IProduct...>. Отображение одной карточки и отслеживание добавление товара в корзину. Методы:
-- set disabledBuy - ;
-- set title - ;
-- set price - ;
-- set description - ;
-- set category - ;
-- set image - ;
-- set index - .
+- set disabledBuy - блокировка кнопки купить;
+- set title - записать заголовок;
+- set price - записать цену;
+- set description - записать описание;
+- set category - записать категорию;
+- set image - записать картинку;
+- set index - записать индекс.
 
 class CatalogView - наследует от Component<{items: HTMLElement[]}>. Отображение каталога карточек на главной странице. Метод:
 - set items - .
