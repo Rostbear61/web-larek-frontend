@@ -54,44 +54,44 @@ yarn build
 
 ## Типы данных и интерфейсы
 
-type TResponseProductList = ApiListResponse<IProduct>; - каталог товаров полученных с сервера и общее кол-во товаров
++type TResponseProductList = ApiListResponse<IProduct>; - каталог товаров полученных с сервера и общее кол-во товаров
 
-type TResponseProductItem = IProduct | { error: 'NotFound' }; 
++type TResponseProductItem = IProduct | { error: 'NotFound' }; 
 
-type TSendProduct = ISendOrder | { error: string }
++type TSendProduct = ISendOrder | { error: string }
 
-type TResponseOrder = { id: string; total: number } | { error: string }; 
++type TResponseOrder = { id: string; total: number } | { error: string }; 
 
-type EmitterEvent = {
++type EmitterEvent = {
  -   eventName: string,
  -   data: unknown
 };
 
-type CategoryType = 'другое' | 'софт-скил' | 'дополнительное' | 'кнопка' | 'хард-скил'; - категории товаров
++type CategoryType = 'другое' | 'софт-скил' | 'дополнительное' | 'кнопка' | 'хард-скил'; - категории товаров
 
-type TPaymentMethod = 'card' | 'cash'; - тип оплаты
++type TPaymentMethod = 'card' | 'cash'; - тип оплаты
 
-type Partial<T> = {
++type Partial<T> = {
  -   [P in keyof T]?: T[P];
 }
 
-type EventName = string | RegExp;
++type EventName = string | RegExp;
 
-type Subscriber = Function;
++type Subscriber = Function;
 
-type TAnswerOrder = { id: string; total: number };
++type TAnswerOrder = { id: string; total: number };
 
-interface IEvents {
++interface IEvents {
  -   on<T extends object>(event: EventName, callback: (data: T) => void): void;
  -   emit<T extends object>(event: string, data?: T): void;
  -   trigger<T extends object>(event: string, context?: Partial<T>): (data: T) => void;
 }
 
-interface IEventEmiter {
++interface IEventEmiter {
 -	emit: (event: string, data: unknown) => void;
 }
 
-interface IProduct {
++interface IProduct {
 -	id: string; - id товара;
 -    category: string; - категория товара;
 -    title: string; - название товара;
@@ -100,7 +100,7 @@ interface IProduct {
 -	price: number | null; - стоимость товара;
 }
 
-interface ISendOrder {
++interface ISendOrder {
 -	"payment": string,
 -    "email": string,
 -    "phone": string,
@@ -109,68 +109,68 @@ interface ISendOrder {
 -    "items": string[]
 }
 
-interface IFormState {
++interface IFormState {
  -   valid: boolean;
  -   errors: string[];
 }
 
-interface IBasketView {
++interface IBasketView {
 -    items: HTMLElement[];
 -    total: number |null;
 -    valid: boolean;
 }
 
-interface IPageView {
++interface IPageView {
 -	set basketCount(value: number);
 -	set scrollState(value: boolean);
 }
 
-interface IContacts{
++interface IContacts{
 -	phone: string;
 -	email: string;
 }
 
-interface IPayment{
++interface IPayment{
 -	payment: TPaymentMethod,
 -	address: string,
 }
 
-interface IOrderForm {
++interface IOrderForm {
 -	payment: TPaymentMethod;
 -	address: string;
 }
 
-interface ICatalogModel {
++interface ICatalogModel {
 -	items: IProduct[];
 -	findProductById(id: string): IProduct;
 }
 
-interface ISuccess {
++interface ISuccess {
 -	total: number;
 }
 
-interface IModalData {
++interface IModalData {
  -   content: HTMLElement ;
 }
 
-interface IBasket {
++interface IBasket {
 -	items: Set<string>;
 }
 
-interface IBasketModel {
++interface IBasketModel {
 -	items: Set<string>;
 -	add(id: string): void;
 -	remove(id: string): void;
 -	getTotal(catalog: ICatalogModel): number|null;
 }
 
-interface IOrder extends IContacts, IPayment {
++interface IOrder extends IContacts, IPayment {
 -	total: number;
 -	items: string[];
 }
 
 ## Базовый код
-class Api {
++class Api {
 -	readonly baseUrl: string;
 -	protected options: RequestInit;
 -	constructor(baseUrl: string, options: RequestInit = {}) ;
@@ -179,7 +179,7 @@ class Api {
 -	post(uri: string, data: object, method: ApiPostMethods = 'POST').
 }
 
-abstract class Component<T> {
++abstract class Component<T> {
 -	protected constructor(protected readonly container: HTMLElement);
 -	toggleClass(element: HTMLElement, className: string, force?: boolean);
 -	protected setText(element: HTMLElement, value: unknown);
@@ -190,7 +190,7 @@ abstract class Component<T> {
 -	render(data?: Partial<T>): HTMLElement .
 }
 
-class EventEmitter implements IEvents {
++class EventEmitter implements IEvents {
 -	_events: Map<EventName, Set<Subscriber>>;
 -	on<T extends object>(eventName: EventName, callback: (event: T) => void) ;
 -	off(eventName: EventName, callback: Subscriber) ;
@@ -200,12 +200,12 @@ class EventEmitter implements IEvents {
 -	trigger<T extends object>(eventName: string, context?: Partial<T>) .
 }
 
-abstract class Model<T> {
++abstract class Model<T> {
 -	constructor(data: Partial<T>, protected events: IEvents);
 -	emitChanges(event: string, payload?: object) .
 }
 
-class Form<T> extends Component<T>
++class Form<T> extends Component<T>
 - 	protected _submit;
 -	protected _errors;
 -	protected onInputChange;
@@ -213,7 +213,7 @@ class Form<T> extends Component<T>
 -	set errors;
 -	render.
 
-class Modal extends Component<IModalData> {
++class Modal extends Component<IModalData> {
 -    protected _closeButton: HTMLButtonElement;
 -    protected _content: HTMLElement;
 -    set content(value: HTMLElement);
@@ -222,26 +222,26 @@ class Modal extends Component<IModalData> {
 -    render(data: IModalData) : HTMLElement.
 }
 
-class SuccessView extends Component<ISuccess> {
++class SuccessView extends Component<ISuccess> {
 -    private description: HTMLElement;
 -    set total(value: number).
 }
 
 ## Модель данных
 
-class CatalogModel - реализует интерфейс ICatalogModel. Содержит каталог полученных товаров. Методы:
++class CatalogModel - реализует интерфейс ICatalogModel. Содержит каталог полученных товаров. Методы:
 - setItems - записывает каталог продуктов
 - getItems - возвращяет каталог продуктов
 - findProductById - возвращает продукт по id
 
-class BasketModel - реализует интерфейс IBasketModel наследует от Model<IBasket>. Содержит список товаров, которые добавлены в корзину и их кол-во. Методы:
++class BasketModel - реализует интерфейс IBasketModel наследует от Model<IBasket>. Содержит список товаров, которые добавлены в корзину и их кол-во. Методы:
 - add - добавление товара;
 - remove - убрать товар;
 - validation - 
 - reset - очистить от всех товаров;
 - getTotal - стоимость всех товаров в корзине.
 
-class ContactModel - наследует от Model<IContacts>. Методы :
++class ContactModel - наследует от Model<IContacts>. Методы :
 - reset - сброс значений телефона и почтового адреса;
 - set email - записать почтовый адрес;
 - set phone - записать телефон;
@@ -249,7 +249,7 @@ class ContactModel - наследует от Model<IContacts>. Методы :
 - get email - записать почтовый адрес;
 
 
-class PaymentModel - наследует от Model<IPayment>. Методы :
++class PaymentModel - наследует от Model<IPayment>. Методы :
 - validate - валидация форм;
 - reset - сброс значений телефона и почтового адреса;
 - set payment - записать способ оплаты ;
@@ -259,11 +259,11 @@ class PaymentModel - наследует от Model<IPayment>. Методы :
 
 ## Компоненты представления
 
-class BasketView - наследует от Component<IBasketView> Отображение корзины. Методы:
++class BasketView - наследует от Component<IBasketView> Отображение корзины. Методы:
 - set items - отображение списка с товарами либо надписи "Корзина пуста";
 - set valid - 
 
-class CardView - наследует от Component<IProduct...>. Отображение одной карточки и отслеживание добавление товара в корзину. Методы:
++class CardView - наследует от Component<IProduct...>. Отображение одной карточки и отслеживание добавление товара в корзину. Методы:
 - set disabledBuy - блокировка кнопки купить;
 - set title - записать заголовок;
 - set price - записать цену;
@@ -272,19 +272,19 @@ class CardView - наследует от Component<IProduct...>. Отображ�
 - set image - записать картинку;
 - set index - записать индекс.
 
-class CatalogView - наследует от Component<{items: HTMLElement[]}>. Отображение каталога карточек на главной странице. Метод:
++class CatalogView - наследует от Component<{items: HTMLElement[]}>. Отображение каталога карточек на главной странице. Метод:
 - set items - .
 
-class PageView - наследует от Component<IPageView>. Отображение кол-ва товаров в корзине и блокировка прокрутки при открытии модального окна. Методы:
++class PageView - наследует от Component<IPageView>. Отображение кол-ва товаров в корзине и блокировка прокрутки при открытии модального окна. Методы:
 - set basketCount - отобразить кол-во товаров на странице; 
 - set scrollState - блакировка прокрутки.
 
-class ContactsForm - наследует от Form<IContact>. Запись почты и телефона. Методы:
++class ContactsForm - наследует от Form<IContact>. Запись почты и телефона. Методы:
 - set phone;
 - set email.
 
 
-class PayForm - наследует от Form<IPayment>. Запись способа оплаты и адреса доставки. Методы:
++class PayForm - наследует от Form<IPayment>. Запись способа оплаты и адреса доставки. Методы:
 - set address - ;
 - set payment - .
 ## Презентер
