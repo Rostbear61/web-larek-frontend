@@ -170,16 +170,16 @@ interface IOrder extends IContacts, IPayment {
 }
 
 ## Базовый код
-class Api {
+class Api
 -	readonly baseUrl: string;
 -	protected options: RequestInit;
 -	constructor(baseUrl: string, options: RequestInit = {}) ;
 -	protected handleResponse(response: Response): Promise<object> ;
 -	get(uri: string) ;
 -	post(uri: string, data: object, method: ApiPostMethods = 'POST').
-}
 
-+abstract class Component<T> {
+
+abstract class Component<T>
 -	protected constructor(protected readonly container: HTMLElement);
 -	toggleClass(element: HTMLElement, className: string, force?: boolean);
 -	protected setText(element: HTMLElement, value: unknown);
@@ -188,9 +188,9 @@ class Api {
 -	protected setVisible(element: HTMLElement) ;
 -	protected setImage(element: HTMLImageElement, src: string, alt?: string) ;
 -	render(data?: Partial<T>): HTMLElement .
-}
 
-+class EventEmitter implements IEvents {
+
+class EventEmitter implements IEvents
 -	_events: Map<EventName, Set<Subscriber>>;
 -	on<T extends object>(eventName: EventName, callback: (event: T) => void) ;
 -	off(eventName: EventName, callback: Subscriber) ;
@@ -198,12 +198,12 @@ class Api {
 -	onAll(callback: (event: EmitterEvent) => void) ;
 -	offAll() ;
 -	trigger<T extends object>(eventName: string, context?: Partial<T>) .
-}
 
-abstract class Model<T> {
+
+abstract class Model<T>
 -	constructor(data: Partial<T>, protected events: IEvents);
 -	emitChanges(event: string, payload?: object) .
-}
+
 
 class Form<T> extends Component<T>
 - 	protected _submit;
@@ -213,19 +213,17 @@ class Form<T> extends Component<T>
 -	set errors;
 -	render.
 
-class Modal extends Component<IModalData> {
+class Modal extends Component<IModalData> 
 -    protected _closeButton: HTMLButtonElement;
 -    protected _content: HTMLElement;
 -    set content(value: HTMLElement);
 -    open();
 -    close();
 -    render(data: IModalData) : HTMLElement.
-}
 
-class SuccessView extends Component<ISuccess> {
+class SuccessView extends Component<ISuccess> 
 -    private description: HTMLElement;
 -    set total(value: number).
-}
 
 ## Модель данных
 
