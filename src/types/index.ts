@@ -1,15 +1,7 @@
-export type TResponseProductList = IProduct;
-export type TResponseProductItem = IProduct | { error: 'NotFound' };
 export type TSendProduct = ISendOrder | { error: string }
 export type TResponseOrder = TAnswerOrder | { error: string };
-export type CategoryType = 'другое' | 'софт-скил' | 'дополнительное' | 'кнопка' | 'хард-скил';
 export type TPaymentMethod = 'card' | 'cash'; 
 export type EventName = string | RegExp;
-export type Subscriber = Function;
-export type EmitterEvent = {
-eventName: string,
-data: unknown
-};
 export type TAnswerOrder = { id: string; total: number };
 export interface IEvents { 
     on<T extends object>(event: EventName, callback: (data: T) => void): void;
@@ -20,7 +12,10 @@ export interface IEvents {
 export interface IEventEmiter {
 	emit: (event: string, data: unknown) => void;
 }
-
+export interface IServerAnswer {
+    items : IProduct[],
+    total : number
+}
 export interface IProduct {
     id: string; 
     category: string;
@@ -39,11 +34,6 @@ export interface ISendOrder {
     "items": string[];
 }
 
-export interface IFormState { 
-    valid: boolean; 
-    errors: string[]; 
-}
-
 export interface IBasketView {
     items: HTMLElement[];
     total: number |null;
@@ -60,27 +50,14 @@ export interface IContacts{
 	email: string;
 }
 
-export interface IPayment{
+export interface IPayForm{
 	payment: TPaymentMethod,
 	address: string,
 }
 
-export interface IOrderForm {
-	payment: TPaymentMethod;
-	address: string;
-}
-
 export interface ICatalogModel {
-	items: IProduct[];
+	products: IProduct[];
 	findProductById(id: string): IProduct;
-}
-
-export interface ISuccess {
-	total: number;
-}
-
-export interface IModalData {
-    content: HTMLElement ;
 }
 
 export interface IBasket {
@@ -88,13 +65,22 @@ export interface IBasket {
 }
 
 export interface IBasketModel {
-	items: Set<string>;
-	add(id: string): void;
-	remove(id: string): void;
-	getTotal(catalog: ICatalogModel): number|null;
+	addItem(id: string): void;
+	removeItem(id: string): void;
+    checkItem(id: string): boolean;
+    getItemsCount(): number;
+    clearAll(): void;
+    getItems() : string[];
 }
 
-export interface IOrder extends IContacts, IPayment {
+export interface IOrder extends IContacts, IPayForm {
 	total: number;
 	items: string[];
+}
+
+export interface IClientModel {
+    payment: TPaymentMethod,
+	address: string,
+    phone: string;
+	email: string;
 }

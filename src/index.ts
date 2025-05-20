@@ -1,10 +1,9 @@
 import './scss/styles.scss';
 import { WebLarekApi } from './components/WebLarekApi';
 import {API_URL} from './utils/constants';
-import { Presenter } from './components/Presenter';
 import { EventEmitter } from './components/base/events';
-import { IContacts, IPayment, IProduct, TAnswerOrder, TResponseOrder } from './types';
-
+import { Presenter } from './components/Presenter';
+import { IProduct, IServerAnswer } from "./types";
 
 const api = new WebLarekApi(API_URL);
 const events = new EventEmitter();
@@ -12,62 +11,59 @@ const presenter = new Presenter(events);
 
 api.getItemsList()
 .then((data) => presenter.updateCatalog(data))
-.catch((error) => console.log(error));
+.catch(err => {
+    console.log(err);
+}) 
 
-events.on('catalog:change', () => {
-    presenter.renderCatalog();
+events.on('catalog_update', (data: IProduct[]) => {
+   presenter.showCard(data);
+});
+events.on('card_click', (card: IProduct) => {
+    presenter.openCardModal(card);
 });
 
-events.on('card:click', (event: IProduct) => {
-    presenter.openCard(event);
+events.on('card_byu', (card: IProduct) => {
+    presenter.basketAdd(card);
+    presenter.openCardModal(card);
+});
+events.on('card_delete', (card: IProduct) => {
+    presenter.basketRemove(card);
+    presenter.openCardModal(card);
 });
 
-events.on('backet:change', () => {
-    presenter.renderBasket();
+events.on('open_modal', () => {
+    presenter.pageScrollLock();
+});
+events.on('close_modal', () => {
+    presenter.pageScrollUnlock();
+});
+events.on('open_basket', () => {
+    presenter.openBasket();
+});
+events.on('basket_changed', () => {
+    presenter.UpdateBasketCount();
 });
 
-events.on('contacts:submit', () => {
-    api.postOrder(presenter.buildOrder())
-    .then((result : TAnswerOrder ) => {
-        
-        presenter.renderAnswer(result.total);
-    })
-    .catch((error) => console.log(error));
+events.on('basket_delete', (product: IProduct) => {
+    presenter.basketRemove(product);
+    presenter.openBasket();
 });
 
-events.on('successForm:okClick', () => {
-    presenter.closeModal(); 
-    presenter.renderBasket();
+events.on('basket_order', () => {
+   presenter.openPayForm();
 });
 
-events.on('order:open', () => {
-    presenter.openPayment();
+events.on('payForm_submit', (data) => {
+    presenter.updatePayInfo(data);
+    presenter.openContactForm();
 });
-
-events.on('order:submit', () => {
-    presenter.openContact();
-})
-
-events.on(/^order\..*:change/, (data: {field: keyof IPayment, value: string}) => {
-    presenter.updatePayment(data.field, data.value);
-});
-
-events.on('payment: change', () => {
-    presenter.renderPayment();   
-});
-
-events.on('contact:change', () => {    
-    presenter.renderContacts();   
-});
-
-events.on(/^contact\..*\..*$/, (data: {field: keyof IContacts, value: string}) => {
-    presenter.updateContacts(data.field as keyof IContacts, data.value);
-});
-
-events.on('modal:open', () => {
-    presenter.lockedWrapper();
-});
-
-events.on('modal:close', () => {
-    presenter.unlockedWrapper();
+events.on('contactsForm_submit', (data) => {
+    presenter.updateContactsInfo(data);
+    api.postOrder(presenter.sendOrder())
+    .then((data) => 
+        presenter.openSuccess(data)
+    );
+}); 
+events.on('close_success', () => {
+    presenter.closeModal();
 });

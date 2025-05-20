@@ -133,3 +133,15 @@ export function createElement<
     }
     return element;
 }
+
+const categoryMap: Record<string, string> = {
+    'другое': 'other',
+    'софт-скил': 'soft',
+    'дополнительное': 'additional',
+    'кнопка': 'button',
+    'хард-скил': 'hard',
+  };
+
+export function transformCategory(category: string) : string {
+    return categoryMap[category];
+}

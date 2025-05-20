@@ -1,57 +1,38 @@
-import { IBasket, IBasketModel, ICatalogModel, IEvents } from "../../types";
+import { IBasket } from "../../types";
 import { Model } from "../base/Model";
+import { IEvents } from "../base/events";
 
-
-
-export class BasketModel extends Model<IBasket> implements IBasketModel {
-    items: Set<string>;
-
-    private static getDefault(): IBasket {
-        return {items: new Set<string>()};
+export class BasketModel extends Model<IBasket> {
+    private _items : string[];
+    constructor(data: Partial<IBasket>, events: IEvents) {
+        super(data, events);
+        this._items = [];
     }
 
-    constructor(events: IEvents) {
-        super(BasketModel.getDefault(), events);
+    addItem(id: string) {
+        this._items.push(id);
+        this.events.emit('basket_changed');
     }
-
-    reset() {
-        Object.assign(this, BasketModel.getDefault());
-        this.emitChanges('basket:change', this.items);
-    }
-
-    getTotal(catalog: ICatalogModel): number|null {
-        let result = 0;
-        for (let id of Array.from(this.items.values())){
-            const price = catalog.findProductById(id).price;
-            if (price !== null) {
-                result = result + price;
-            } else {
-                return null;
-            }
+    removeItem(id: string) {
+        const index = this._items.indexOf(id);
+        if (index !== -1) {
+            this._items.splice(index, 1);
         }
-        return result;
+        this.events.emit('basket_changed');
     }
-
-    validation(catalog: ICatalogModel): boolean {
-        if(this.items.size == 0) {
-            return false;
-        }
-        for (let id of Array.from(this.items.values())) {
-            if (catalog.findProductById(id).price === null) {
-                return false;
-            }
-        }   
-        return true;
+    checkItem(id: string): boolean {
+        return this._items.includes(id);
     }
-
-    add(id: string): void {
-        this.items.add(id);
-        this.emitChanges('basket:change', this.items);
+    
+    getItemsCount(): number {
+        return this._items.length;
     }
-
-    remove(id: string): void {
-        this.items.delete(id);
-        this.emitChanges('basket:change', this.items);
+    clearAll() {
+        this._items = []; 
+        this.events.emit('basket_changed');
+    }
+    getItems() : string[]{
+        return this._items;
     }
 
 }

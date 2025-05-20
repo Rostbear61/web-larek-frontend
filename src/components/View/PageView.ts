@@ -1,25 +1,37 @@
-import { IEventEmiter, IPageView } from "../../types";
-import { Component } from "../base/Component";
-import { ensureElement } from "../../utils/utils";
+import { IPageView, IEvents } from '../../types';
+import { Component } from '../base/Component';
+export class PageView extends Component<IPageView> implements IPageView {
+    private basketCounter: HTMLSpanElement;
+    private basketButton: HTMLButtonElement;
+    private pageWrapper: HTMLElement;
 
-
-export class PageView extends Component<IPageView> {
-    private _basketCount: HTMLSpanElement;
-
-    constructor(container: HTMLElement, protected events: IEventEmiter, onBasketClick: () => void){
+    constructor(container: HTMLElement, protected events: IEvents) {
+        console.log(container);
         super(container);
-        this._basketCount = ensureElement<HTMLSpanElement>('.header__basket-counter', this.container);
 
-        const basketButton = ensureElement<HTMLButtonElement>('.header__basket');
-        basketButton.addEventListener('click', onBasketClick);
-        
+        this.basketCounter = this.container.querySelector('.header__basket-counter') as HTMLSpanElement;
+        this.basketButton = this.container.querySelector('.header__basket') as HTMLButtonElement;
+        this.pageWrapper = container;
+
+        console.log(this.pageWrapper);
+
+        this.basketButton.addEventListener('click', () => {
+            this.events.emit('open_basket');
+        });
     }
 
-    set basketCount(value: number){
-        this.setText(this._basketCount, value.toString());
+    set basketCount(value: number) {
+        this.basketCounter.textContent = String(value);
     }
 
     set scrollState(value: boolean) {
-        this.toggleClass(this.container, 'page__wrapper_locked', value);
+        if (this.pageWrapper) {
+            if (value) {
+                this.toggleClass(this.pageWrapper, 'page__wrapper_locked', true);
+            } else {
+                this.toggleClass(this.pageWrapper, 'page__wrapper_locked', false);
+            }
+        }
     }
 }
+

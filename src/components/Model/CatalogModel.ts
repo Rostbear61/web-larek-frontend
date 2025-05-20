@@ -1,21 +1,25 @@
-import { ICatalogModel, IEventEmiter, IProduct } from "../../types";
-
+import { IProduct, ICatalogModel} from "../../types";
+import { IEvents } from "../base/events";
 
 export class CatalogModel implements ICatalogModel {
-    private _items: IProduct[];
 
-    constructor(protected events: IEventEmiter){}
+    products: IProduct[] = [];
+    constructor (protected events: IEvents ) {
+        this.products = [];
 
-    set items(items: IProduct[]){
-        this._items = items;
-        this.events.emit('catalog:change', {items: this.items});
     }
 
-    get items() {
-        return this._items;
+    setProduct(products: IProduct[]){
+        this.products = products;
+        this.events.emit('catalog_update', products);
     }
-
+    
     findProductById(id: string): IProduct {
-        return this.items.find(p => p.id == id);
+        return this.products.find(product => product.id === id);
     }
+
+    getAllProducts(): IProduct[] {
+        return this.products;
+    }
+
 }
