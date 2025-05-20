@@ -2,14 +2,14 @@ import { IEventEmiter, IEvents, IProduct, IServerAnswer, IPageView, IBasketModel
 import { CatalogModel } from "./Model/CatalogModel";
 import { CatalogView } from "./View/CatalogView";
 import { PageView } from "./View/PageView"; 
-import { Modal } from "./Modal";
+import { Modal } from "./View/Modal";
 import { BasketModel } from "./Model/BasketModel";
 import {cardModalView} from "./View/CardView"
 import { BasketView } from "./View/BasketView";
 import { PayForm } from "./View/PayForm";
 import { ClientModel } from "./Model/ClientModel";
 import { ContactsForm } from "./View/ContactsForm";
-import { OrderSuccess } from "../components/Success";
+import { OrderSuccess } from "./View/Success";
 
 export class Presenter {
     private catalogModel: CatalogModel; 

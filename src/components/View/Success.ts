@@ -1,4 +1,4 @@
-import { TResponseOrder, IEvents} from '../types';
+import { TResponseOrder, IEvents} from '../../types';
 export class OrderSuccess {
 
     constructor(protected events: IEvents){

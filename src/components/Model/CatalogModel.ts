@@ -21,5 +21,4 @@ export class CatalogModel implements ICatalogModel {
     getAllProducts(): IProduct[] {
         return this.products;
     }
-
 }

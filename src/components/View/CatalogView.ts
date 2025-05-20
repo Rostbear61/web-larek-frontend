@@ -64,7 +64,6 @@ class ProductCard {
         img.src = CDN_URL + this.data.image.replace(".svg" , ".png");
         const price = button.querySelector('.card__price');
         if (price) price.textContent = this.formatPrice();
-
         return button;
     }
 

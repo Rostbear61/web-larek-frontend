@@ -1,4 +1,4 @@
-import { IEvents } from "../types";
+import { IEvents } from "../../types";
 export class Modal {
 
     private modalConteiner = document.querySelector('#modal-container');
@@ -28,7 +28,6 @@ export class Modal {
             modalContent.innerHTML = '';
             modalContent.append(content);
         }
-        modalContent.append(content);
     }
 
     closeModal() {
