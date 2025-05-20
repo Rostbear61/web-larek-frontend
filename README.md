@@ -155,7 +155,8 @@ class Api:
 -	constructor(baseUrl: string, options: RequestInit = {}) ;
 -	protected handleResponse(response: Response): Promise<object> ;
 -	get(uri: string) ;
--	post(uri: string, data: object, method: ApiPostMethods = 'POST').
+-	post(uri: string, data: object, method: ApiPostMethods = 'POST')
+
 
 abstract class Component<T>:
 -	protected constructor(protected readonly container: HTMLElement);
@@ -167,6 +168,7 @@ abstract class Component<T>:
 -	protected setImage(element: HTMLImageElement, src: string, alt?: string) ;
 -	render(data?: Partial<T>): HTMLElement .
 
+
 class EventEmitter implements IEvents:
 -	_events: Map<EventName, Set<Subscriber>>;
 -	on<T extends object>(eventName: EventName, callback: (event: T) => void) ;
@@ -175,6 +177,7 @@ class EventEmitter implements IEvents:
 -	onAll(callback: (event: EmitterEvent) => void) ;
 -	offAll() ;
 -	trigger<T extends object>(eventName: string, context?: Partial<T>) .
+
 
 abstract class Model<T>:
 -	constructor(data: Partial<T>, protected events: IEvents);
