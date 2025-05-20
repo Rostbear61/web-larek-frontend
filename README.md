@@ -149,44 +149,44 @@ export interface IClientModel {
 }
 
 ## Базовый код
-class Api:
--	readonly baseUrl: string;
--	protected options: RequestInit;
--	constructor(baseUrl: string, options: RequestInit = {}) ;
--	protected handleResponse(response: Response): Promise<object> ;
--	get(uri: string) ;
--	post(uri: string, data: object, method: ApiPostMethods = 'POST').
+- class Api:
+--	readonly baseUrl: string;
+--	protected options: RequestInit;
+--	constructor(baseUrl: string, options: RequestInit = {}) ;
+--	protected handleResponse(response: Response): Promise<object> ;
+--	get(uri: string) ;
+--	post(uri: string, data: object, method: ApiPostMethods = 'POST').
 
-abstract class Component<T>:
--	protected constructor(protected readonly container: HTMLElement);
--	toggleClass(element: HTMLElement, className: string, force?: boolean);
--	protected setText(element: HTMLElement, value: unknown);
--	setDisabled(element: HTMLElement, state: boolean) ;
--	protected setHidden(element: HTMLElement) ;
--	protected setVisible(element: HTMLElement) ;
--	protected setImage(element: HTMLImageElement, src: string, alt?: string) ;
--	render(data?: Partial<T>): HTMLElement .
+- abstract class Component<T>:
+--	protected constructor(protected readonly container: HTMLElement);
+--	toggleClass(element: HTMLElement, className: string, force?: boolean);
+--	protected setText(element: HTMLElement, value: unknown);
+--	setDisabled(element: HTMLElement, state: boolean) ;
+--	protected setHidden(element: HTMLElement) ;
+--	protected setVisible(element: HTMLElement) ;
+--	protected setImage(element: HTMLImageElement, src: string, alt?: string) ;
+--	render(data?: Partial<T>): HTMLElement .
 
-class EventEmitter implements IEvents:
--	_events: Map<EventName, Set<Subscriber>>;
--	on<T extends object>(eventName: EventName, callback: (event: T) => void) ;
--	off(eventName: EventName, callback: Subscriber) ;
--	emit<T extends object>(eventName: string, data?: T) ;
--	onAll(callback: (event: EmitterEvent) => void) ;
--	offAll() ;
--	trigger<T extends object>(eventName: string, context?: Partial<T>) .
+- class EventEmitter implements IEvents:
+--	_events: Map<EventName, Set<Subscriber>>;
+--	on<T extends object>(eventName: EventName, callback: (event: T) => void) ;
+--	off(eventName: EventName, callback: Subscriber) ;
+--	emit<T extends object>(eventName: string, data?: T) ;
+--	onAll(callback: (event: EmitterEvent) => void) ;
+--	offAll() ;
+--	trigger<T extends object>(eventName: string, context?: Partial<T>) .
 
-abstract class Model<T>:
--	constructor(data: Partial<T>, protected events: IEvents);
--	emitChanges(event: string, payload?: object) .
+- abstract class Model<T>:
+--	constructor(data: Partial<T>, protected events: IEvents);
+--	emitChanges(event: string, payload?: object) .
 
-class Modal extends Component<IModalData>:
--    protected _closeButton: HTMLButtonElement;
--    protected _content: HTMLElement;
--    set content(value: HTMLElement);
--    open();
--    close();
--    render(data: IModalData) : HTMLElement.
+- class Modal extends Component<IModalData>:
+--    protected _closeButton: HTMLButtonElement;
+--   protected _content: HTMLElement;
+--    set content(value: HTMLElement);
+--    open();
+--    close();
+--    render(data: IModalData) : HTMLElement.
 
 ## Модель данных
 
