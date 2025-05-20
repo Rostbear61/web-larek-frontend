@@ -149,13 +149,13 @@ export interface IClientModel {
 }
 
 ## Базовый код
-- class Api:
---	readonly baseUrl: string;
---	protected options: RequestInit;
---	constructor(baseUrl: string, options: RequestInit = {}) ;
---	protected handleResponse(response: Response): Promise<object> ;
---	get(uri: string) ;
---	post(uri: string, data: object, method: ApiPostMethods = 'POST').
+class Api:
+-	readonly baseUrl: string;
+-	protected options: RequestInit;
+-	constructor(baseUrl: string, options: RequestInit = {}) ;
+-	protected handleResponse(response: Response): Promise<object> ;
+-	get(uri: string) ;
+-	post(uri: string, data: object, method: ApiPostMethods = 'POST').
 
 - abstract class Component<T>:
 --	protected constructor(protected readonly container: HTMLElement);
