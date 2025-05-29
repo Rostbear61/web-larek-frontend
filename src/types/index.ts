@@ -1,6 +1,8 @@
+import {categoryMap} from "../utils/constants";
 export type TSendProduct = ISendOrder | { error: string }
 export type TResponseOrder = TAnswerOrder | { error: string };
 export type TPaymentMethod = 'card' | 'cash'; 
+export type CategoryKey = keyof typeof categoryMap;
 export type EventName = string | RegExp;
 export type TAnswerOrder = { id: string; total: number };
 export interface IEvents { 
@@ -18,7 +20,7 @@ export interface IServerAnswer {
 }
 export interface IProduct {
     id: string; 
-    category: string;
+    category: CategoryKey;
     title: string; 
     image: string; 
     description: string; 
@@ -65,12 +67,13 @@ export interface IBasket {
 }
 
 export interface IBasketModel {
-	addItem(id: string): void;
-	removeItem(id: string): void;
+	addItem(id: string, price: number): void;
+	removeItem(id: string, price: number): void;
     checkItem(id: string): boolean;
     getItemsCount(): number;
     clearAll(): void;
     getItems() : string[];
+    getTotalPrice(): number;
 }
 
 export interface IOrder extends IContacts, IPayForm {
@@ -84,3 +87,4 @@ export interface IClientModel {
     phone: string;
 	email: string;
 }
+

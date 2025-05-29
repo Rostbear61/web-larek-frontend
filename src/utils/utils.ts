@@ -1,3 +1,4 @@
+import {categoryMap} from "./constants";
 export function pascalToKebab(value: string): string {
     return value.replace(/([a-z0–9])([A-Z])/g, "$1-$2").toLowerCase();
 }
@@ -134,7 +135,7 @@ export function createElement<
     return element;
 }
 
-const categoryMap: Record<string, string> = {
+/*const categoryMap: Record<string, string> = {
     'другое': 'other',
     'софт-скил': 'soft',
     'дополнительное': 'additional',
@@ -144,4 +145,15 @@ const categoryMap: Record<string, string> = {
 
 export function transformCategory(category: string) : string {
     return categoryMap[category];
+}*/
+
+type CategoryKey = keyof typeof categoryMap;
+type CategoryValue = typeof categoryMap[CategoryKey];
+
+export function transformCategory<K extends CategoryKey>(category: K): typeof categoryMap[K] {
+  return categoryMap[category];
+}
+
+export function formatNumber(x: number, sep = ' ') {
+    return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, sep);
 }

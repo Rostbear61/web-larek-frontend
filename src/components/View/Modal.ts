@@ -1,37 +1,45 @@
-import { IEvents } from "../../types";
-export class Modal {
+import {Component} from "../base/Component";
+import {ensureElement} from "../../utils/utils";
+import {IEvents} from "../base/events";
 
-    private modalConteiner = document.querySelector('#modal-container');
+interface IModalData {
+    content: HTMLElement;
+}
 
-    constructor(private events: IEvents) {}
+export class Modal extends Component<IModalData> {
+    protected _closeButton: HTMLButtonElement;
+    protected _content: HTMLElement;
 
-    openModal(content: HTMLElement ){
 
-        this.modalConteiner.classList.add('modal_active');
+    constructor(container: HTMLElement, protected events: IEvents) {
+        super(container);
 
-        const closeButton = this.modalConteiner.querySelector('.modal__close');
+        this._closeButton = ensureElement<HTMLButtonElement>('.modal__close', container);
+        this._content = ensureElement<HTMLElement>('.modal__content', container);
 
-        closeButton.addEventListener('click', () => {
-            this.closeModal();
-            this.events.emit('close_modal');
-        })
-
-        document.addEventListener('keydown', (event) => {
-            if (event.key === 'Escape') {
-                this.closeModal();
-                this.events.emit('close_modal');
-            }
-        });
-
-        const modalContent = this.modalConteiner.querySelector('.modal__content');
-        if(modalContent){
-            modalContent.innerHTML = '';
-            modalContent.append(content);
-        }
+        this._closeButton.addEventListener('click', this.close.bind(this));
+        this.container.addEventListener('click', this.close.bind(this));
+        this._content.addEventListener('click', (event) => event.stopPropagation());
     }
 
-    closeModal() {
-        this.modalConteiner.classList.remove('modal_active');
+    set content(value: HTMLElement) {
+        this._content.replaceChildren(value);
     }
-    
+
+    open() {
+        this.container.classList.add('modal_active');
+        this.events.emit('open_modal');
+    }
+
+    close() {
+        this.container.classList.remove('modal_active');
+        this.content = null;
+        this.events.emit('close_modal');
+    }
+
+    render(data: IModalData): HTMLElement {
+        super.render(data);
+        this.open();
+        return this.container;
+    }
 }
