@@ -75,7 +75,6 @@ export interface IBasketModel {
     getItems() : string[];
     getTotalPrice(): number;
 }
-
 export interface IOrder extends IContacts, IPayForm {
 	total: number;
 	items: string[];
@@ -86,5 +85,9 @@ export interface IClientModel {
 	address: string,
     phone: string;
 	email: string;
+}
+
+export interface IModalData {
+	content: HTMLElement;
 }
 

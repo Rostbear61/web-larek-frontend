@@ -2,11 +2,7 @@ import {
 	IEventEmiter,
 	IEvents,
 	IProduct,
-	IServerAnswer,
-	IPageView,
 	IBasketModel,
-	IPayForm,
-	IContacts,
 	ISendOrder,
 	TResponseOrder,
 	TPaymentMethod,
@@ -39,7 +35,7 @@ export class Presenter {
 		this.catalogModel = new CatalogModel(this.events);
 		this.modal = new Modal(document.querySelector('.modal'), this.events);
 		this.basketModel = new BasketModel(this.events);
-		this.clientModel = new ClientModel(this.events);
+		this.clientModel = new ClientModel();
 		this.page = new Page(document.querySelector('.page__wrapper'), this.events);
 		this.basket = new Basket(
 			cloneTemplate<HTMLElement>('#basket'),
@@ -67,7 +63,7 @@ export class Presenter {
 		this.page.catalog = this.createCardsFromProducts(products);
 	}
 
-	createCardsFromProducts(products: IProduct[]): HTMLElement[] {
+	private createCardsFromProducts(products: IProduct[]): HTMLElement[] {
 		const cards: HTMLElement[] = [];
 		products.forEach((product) => {
 			const container = cloneTemplate<HTMLElement>('#card-catalog');
@@ -119,7 +115,9 @@ export class Presenter {
 			.map((id) => this.catalogModel.findProductById(id))
 			.filter((product) => product !== undefined) as IProduct[];
 		this.basket.total = this.basketModel.getTotalPrice();
-		this.basket.selected = this.basketModel.getItems();
+		this.basket.selected = this.filterCatalog(
+			this.basketModel.getItems()
+		);
 		let index = 0;
 		let arrayCatalog: HTMLElement[] = productsInBasket.map((product, index) => {
 			return this.orderProductCatalog(product, index);
@@ -128,7 +126,7 @@ export class Presenter {
 		this.modal.render({ content: this.basket.render() });
 	}
 
-	orderProductCatalog(product: IProduct, number: number): HTMLElement {
+	private orderProductCatalog(product: IProduct, number: number): HTMLElement {
 		const container = cloneTemplate<HTMLElement>('#card-basket');
 		const indexSpan = ensureElement<HTMLElement>(
 			'.basket__item-index',
@@ -212,15 +210,7 @@ export class Presenter {
 	}
 	sendOrder() {
 		const productInBacket = this.basketModel.getItems();
-		const allProducts = this.catalogModel
-			.getAllProducts()
-			.map((item) => item.id);
-		const productNotPrice = allProducts.filter(
-			(item) => this.catalogModel.findProductById(item).price === null
-		);
-		const filteredBasket = productInBacket.filter(
-			(item) => !productNotPrice.includes(item)
-		);
+		const filteredBasket = this.filterCatalog(productInBacket);
 		const data = this.clientModel.getAllData();
 
 		this._sendOrder = {
@@ -244,5 +234,17 @@ export class Presenter {
 	closeModal() {
 		this.modal.close;
 		this.pageScrollUnlock();
+	}
+
+	private filterCatalog(products: string[]): string[] {
+		const allProducts = this.catalogModel
+			.getAllProducts()
+			.map((item) => item.id);
+		const productNotPrice = allProducts.filter(
+			(item) => this.catalogModel.findProductById(item).price === null
+		);
+		return products.filter(
+			(item) => !productNotPrice.includes(item)
+		);
 	}
 }

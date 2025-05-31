@@ -1,16 +1,16 @@
-import { IClientModel, IEvents, TPaymentMethod } from '../../types';
+import { IClientModel, IEvents, TPaymentMethod} from '../../types';
 import { settings } from '../../utils/constants';
-interface ValidationResult {
-	isValid: boolean;
-	message?: string;
-}
 
-export class ClientModel {
+interface IValidationResult {
+    isValid: boolean;
+    message?: string;
+}
+export class ClientModel implements IClientModel {
 	private _payment: TPaymentMethod;
 	private _address: string;
 	private _phone: string;
 	private _email: string;
-	constructor(events: IEvents) {
+	constructor() {
 		this._payment = 'card';
 		this._address = '';
 		this._phone = '';
@@ -65,14 +65,14 @@ export class ClientModel {
 		};
 	}
 
-	isValidAdress(): ValidationResult {
-		const isValid = this._address.trim().length > 0;
+	isValidAdress(): IValidationResult {
+		const isValid = this._address.trim().length > 3;
 		return {
 			isValid,
 			message: isValid ? '' : settings.adressValidateMessage,
 		};
 	}
-	isValidClient(): ValidationResult {
+	isValidClient(): IValidationResult {
 		const emailValid = this.validateEmail(this._email);
 		const phoneValid = this.validatePhone(this._phone);
 
@@ -90,11 +90,9 @@ export class ClientModel {
 	}
 
 	private validateEmail(email: string): boolean {
-		const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-		return emailRegex.test(email);
+		return settings.emailRegex.test(email);
 	}
 	private validatePhone(phone: string): boolean {
-		const phoneRegex = /^\+7\d{10}$/;
-		return phoneRegex.test(phone);
+		return settings.phoneRegex.test(phone);
 	}
 }
