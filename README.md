@@ -60,6 +60,8 @@ type TResponseOrder = TAnswerOrder | { error: string };
 
 type TPaymentMethod = 'card' | 'cash'; - тип оплаты
 
+type CategoryKey = keyof typeof categoryMap;
+
 type EventName = string | RegExp;
 
 type TAnswerOrder = { id: string; total: number };
@@ -97,17 +99,6 @@ interface ISendOrder { - интерфейс объекта для отправк
 -    "items": string[]
 }
 
-interface IBasketView {
--    items: HTMLElement[];
--    total: number |null;
--    valid: boolean;
-}
-
-interface IPageView {
--	set basketCount(value: number);
--	set scrollState(value: boolean);
-}
-
 interface IContacts{
 -	phone: string;
 -	email: string;
@@ -123,10 +114,6 @@ interface ICatalogModel {
 -	findProductById(id: string): IProduct;
 }
 
-interface IBasket {
--	items: Set<string>;
-}
-
 interface IBasketModel {
 -	addItem(id: string): void;
 -	removeItem(id: string): void;
@@ -135,12 +122,6 @@ interface IBasketModel {
 -    clearAll(): void;
 -    getItems() : string[];
 }
-
-interface IOrder extends IContacts, IPayment {
--	total: number;
--	items: string[];
-}
-
 export interface IClientModel {
     payment: TPaymentMethod,
 	address: string,
