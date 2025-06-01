@@ -52,8 +52,7 @@ export class Basket extends Component<IBasketView> {
 		this.setText(this._total, `${formatNumber(total)} синапсов`);
 	}
 	set catalog(productsInBasket: IProduct[]) {
-		let index = 0;
-		let arrayCatalog: HTMLElement[] = productsInBasket.map((product, index) => {
+		const arrayCatalog: HTMLElement[] = productsInBasket.map((product, index) => {
 			return this.orderProductCatalog(product, index);
 		});
 		if (arrayCatalog.length) {
