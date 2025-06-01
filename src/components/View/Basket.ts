@@ -73,14 +73,14 @@ export class Basket extends Component<IBasketView> {
 			'.basket__item-index',
 			container
 		);
-		indexSpan.textContent = (number + 1).toString();
+		this.setText(indexSpan, (number + 1).toString());
 		const titleSpan = ensureElement<HTMLElement>('.card__title', container);
-		titleSpan.textContent = product.title;
+		this.setText(titleSpan, product.title);
 		const priceSpan = ensureElement<HTMLElement>('.card__price', container);
 		if (product.price !== null) {
-			priceSpan.textContent = `${product.price} синапсов`;
+			this.setText(priceSpan, `${product.price} синапсов`);
 		} else {
-			priceSpan.textContent = 'Бесценно';
+			this.setText(priceSpan, 'Бесценно');
 		}
 		const deleteButton = ensureElement<HTMLButtonElement>(
 			'.basket__item-delete',
