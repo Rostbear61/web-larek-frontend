@@ -5,44 +5,38 @@ import {
 	ensureElement,
 	formatNumber,
 } from '../../utils/utils';
-import { IEvents } from '../../types';
+import { IEvents, IProduct } from '../../types';
 
 interface IBasketView {
-	items: HTMLElement[];
 	total: number;
 	selected: string[];
+	catalog: IProduct[];
 }
 
 export class Basket extends Component<IBasketView> {
 	protected _list: HTMLElement;
 	protected _total: HTMLElement;
 	protected _button: HTMLElement;
+	protected _listTemplate: HTMLTemplateElement;
 
-	constructor(container: HTMLElement, protected events: IEvents) {
+	constructor(
+		container: HTMLElement,
+		listTemplate: HTMLTemplateElement,
+		protected events: IEvents
+	) {
 		super(container);
 
 		this._list = ensureElement<HTMLElement>('.basket__list', this.container);
-		this._total = this.container.querySelector('.basket__price');
-		this._button = this.container.querySelector('.basket__button');
+		this._total = this.container.querySelector('.basket__price') as HTMLElement;
+		this._button = this.container.querySelector(
+			'.basket__button'
+		) as HTMLElement;
+		this._listTemplate = listTemplate;
 
 		if (this._button) {
 			this._button.addEventListener('click', () => {
 				events.emit('basket_order');
 			});
-		}
-
-		this.items = [];
-	}
-
-	set items(items: HTMLElement[]) {
-		if (items.length) {
-			this._list.replaceChildren(...items);
-		} else {
-			this._list.replaceChildren(
-				createElement<HTMLParagraphElement>('p', {
-					textContent: 'Корзина пуста',
-				})
-			);
 		}
 	}
 
@@ -56,5 +50,46 @@ export class Basket extends Component<IBasketView> {
 
 	set total(total: number) {
 		this.setText(this._total, `${formatNumber(total)} синапсов`);
+	}
+	set catalog(productsInBasket: IProduct[]) {
+		let index = 0;
+		let arrayCatalog: HTMLElement[] = productsInBasket.map((product, index) => {
+			return this.orderProductCatalog(product, index);
+		});
+		if (arrayCatalog.length) {
+			this._list.replaceChildren(...arrayCatalog);
+		} else {
+			this._list.replaceChildren(
+				createElement<HTMLParagraphElement>('p', {
+					textContent: 'Корзина пуста',
+				})
+			);
+		}
+	}
+
+	private orderProductCatalog(product: IProduct, number: number) {
+		const container = cloneTemplate(this._listTemplate);
+		const indexSpan = ensureElement<HTMLElement>(
+			'.basket__item-index',
+			container
+		);
+		indexSpan.textContent = (number + 1).toString();
+		const titleSpan = ensureElement<HTMLElement>('.card__title', container);
+		titleSpan.textContent = product.title;
+		const priceSpan = ensureElement<HTMLElement>('.card__price', container);
+		if (product.price !== null) {
+			priceSpan.textContent = `${product.price} синапсов`;
+		} else {
+			priceSpan.textContent = 'Бесценно';
+		}
+		const deleteButton = ensureElement<HTMLButtonElement>(
+			'.basket__item-delete',
+			container
+		);
+		deleteButton.setAttribute('aria-label', 'удалить');
+		deleteButton.onclick = () => {
+			this.events.emit('basket_delete', product);
+		};
+		return container;
 	}
 }

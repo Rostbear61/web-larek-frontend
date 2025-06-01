@@ -55,13 +55,12 @@ export interface ICatalogModel {
 }
 
 export interface IBasketModel {
-	addItem(id: string, price: number): void;
-	removeItem(id: string, price: number): void;
+	addItem(id: string): void;
+	removeItem(id: string): void;
 	checkItem(id: string): boolean;
 	getItemsCount(): number;
 	clearAll(): void;
 	getItems(): string[];
-	getTotalPrice(): number;
 }
 
 export interface IClientModel {

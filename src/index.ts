@@ -80,17 +80,3 @@ events.on('contacts:submit', () => {
         presenter.openSuccess(data)
     );
 })
-
-
-/*
-events.on('payForm_submit', (data) => {
-    presenter.updatePayInfo(data);
-    presenter.openContactForm();
-});
-events.on('contactsForm_submit', (data) => {
-    presenter.updateContactsInfo(data);
-    
-}); 
-events.on('close_success', () => {
-    presenter.closeModal();
-});*/

@@ -39,6 +39,7 @@ export class Presenter {
 		this.page = new Page(document.querySelector('.page__wrapper'), this.events);
 		this.basket = new Basket(
 			cloneTemplate<HTMLElement>('#basket'),
+			document.querySelector('#card-basket'),
 			this.events
 		);
 		const formOrder = cloneTemplate<HTMLFormElement>('#order');
@@ -63,21 +64,6 @@ export class Presenter {
 		this.page.catalog = this.createCardsFromProducts(products);
 	}
 
-	private createCardsFromProducts(products: IProduct[]): HTMLElement[] {
-		const cards: HTMLElement[] = [];
-		products.forEach((product) => {
-			const container = cloneTemplate<HTMLElement>('#card-catalog');
-			const card = new Card(container, product, this.events);
-			card.category = product.category;
-			card.title = product.title;
-			card.price = product.price;
-			card.image = product.image;
-			cards.push(container);
-		});
-
-		return cards;
-	}
-
 	openCardModal(product: IProduct) {
 		const container = cloneTemplate<HTMLElement>('#card-preview');
 		const card = new Card(container, product, this.events);
@@ -99,10 +85,10 @@ export class Presenter {
 	}
 
 	basketAdd(product: IProduct) {
-		this.basketModel.addItem(product.id, product.price);
+		this.basketModel.addItem(product.id);
 	}
 	basketRemove(product: IProduct) {
-		this.basketModel.removeItem(product.id, product.price);
+		this.basketModel.removeItem(product.id);
 	}
 
 	UpdateBasketCount() {
@@ -114,42 +100,10 @@ export class Presenter {
 		const productsInBasket: IProduct[] = itemIds
 			.map((id) => this.catalogModel.findProductById(id))
 			.filter((product) => product !== undefined) as IProduct[];
-		this.basket.total = this.basketModel.getTotalPrice();
-		this.basket.selected = this.filterCatalog(
-			this.basketModel.getItems()
-		);
-		let index = 0;
-		let arrayCatalog: HTMLElement[] = productsInBasket.map((product, index) => {
-			return this.orderProductCatalog(product, index);
-		});
-		this.basket.items = arrayCatalog;
+		this.basket.total = this.basketTotalPrice(itemIds);
+		this.basket.selected = this.filterCatalog(this.basketModel.getItems());
+		this.basket.catalog = productsInBasket;
 		this.modal.render({ content: this.basket.render() });
-	}
-
-	private orderProductCatalog(product: IProduct, number: number): HTMLElement {
-		const container = cloneTemplate<HTMLElement>('#card-basket');
-		const indexSpan = ensureElement<HTMLElement>(
-			'.basket__item-index',
-			container
-		);
-		indexSpan.textContent = (number + 1).toString();
-		const titleSpan = ensureElement<HTMLElement>('.card__title', container);
-		titleSpan.textContent = product.title;
-		const priceSpan = ensureElement<HTMLElement>('.card__price', container);
-		if (product.price !== null) {
-			priceSpan.textContent = `${product.price} синапсов`;
-		} else {
-			priceSpan.textContent = 'Бесценно';
-		}
-		const deleteButton = ensureElement<HTMLButtonElement>(
-			'.basket__item-delete',
-			container
-		);
-		deleteButton.setAttribute('aria-label', 'удалить');
-		deleteButton.onclick = () => {
-			this.events.emit('basket_delete', product);
-		};
-		return container;
 	}
 
 	openPayForm() {
@@ -219,7 +173,7 @@ export class Presenter {
 			phone: data.phone,
 			payment: data.payment,
 			items: filteredBasket,
-			total: this.basketModel.getTotalPrice(),
+			total: this.basketTotalPrice(productInBacket),
 		};
 		return this._sendOrder;
 	}
@@ -231,10 +185,6 @@ export class Presenter {
 			this.basketModel.clearAll();
 		}
 	}
-	closeModal() {
-		this.modal.close;
-		this.pageScrollUnlock();
-	}
 
 	private filterCatalog(products: string[]): string[] {
 		const allProducts = this.catalogModel
@@ -243,8 +193,28 @@ export class Presenter {
 		const productNotPrice = allProducts.filter(
 			(item) => this.catalogModel.findProductById(item).price === null
 		);
-		return products.filter(
-			(item) => !productNotPrice.includes(item)
-		);
+		return products.filter((item) => !productNotPrice.includes(item));
+	}
+
+	private basketTotalPrice(idBasketsProducts: string[]) {
+		const productsInBasket: IProduct[] = idBasketsProducts
+			.map((id) => this.catalogModel.findProductById(id))
+			.filter((product) => product !== undefined) as IProduct[];
+		return productsInBasket.reduce((acc, product) => acc + product.price, 0);
+	}
+
+	private createCardsFromProducts(products: IProduct[]): HTMLElement[] {
+		const cards: HTMLElement[] = [];
+		products.forEach((product) => {
+			const container = cloneTemplate<HTMLElement>('#card-catalog');
+			const card = new Card(container, product, this.events);
+			card.category = product.category;
+			card.title = product.title;
+			card.price = product.price;
+			card.image = product.image;
+			cards.push(container);
+		});
+
+		return cards;
 	}
 }

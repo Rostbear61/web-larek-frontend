@@ -77,9 +77,12 @@ export class Card extends Component<ICard> {
 
 	set category(value: CategoryKey) {
 		this.setText(this.cardCategory, value);
-		this.cardCategory.classList.add(
+		this.toggleClass(this.cardCategory, `card__category_${transformCategory(value)}`, true);
+
+
+		/*this.cardCategory.classList.add(
 			`card__category_${transformCategory(value)}`
-		);
+		);*/
 	}
 
 	set price(value: number | null) {
@@ -90,9 +93,11 @@ export class Card extends Component<ICard> {
 	set productInBasket(value: boolean) {
 		this.cardInBasket = value;
 		if (value) {
-			this.cardByeButton.textContent = 'Убрать';
+			//this.cardByeButton.textContent = 'Убрать';
+			this.setText(this.cardByeButton, 'Убрать');
 		} else {
-			this.cardByeButton.textContent = 'В корзину';
+			//this.cardByeButton.textContent = 'В корзину';
+			this.setText(this.cardByeButton, 'В корзину');
 		}
 	}
 }
